@@ -119,17 +119,3 @@ create table presenca(
     foreign key (fk_id_compra) references compra(id_compra)
 );
 
-create procedure exemplo_in(
-    in p_numero int 
-)
-
-begin
-    declare v_resultado int;
-    set v_resultado = p_numero * 2;
-
-    select v_resultado;
-    --select p_numero * 2 as resultado;
-
-end; //
-
-delimiter ; 
