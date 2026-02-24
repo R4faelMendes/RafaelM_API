@@ -43,7 +43,13 @@ module.exports = class ingressoController {
   // Buscar ingressos por evento
   static async getByIdEvento(req, res) {
     const eventoId = req.params.id;
-    const query = `SELECT * FROM ingresso WHERE id_ingresso = ?`
+    const query = `SELECT 
+      i.id_ingresso,
+      e.nome
+    FROM ingresso i
+    JOIN evento e 
+      ON i.id_ingresso = e.id_evento
+    WHERE e.id_evento = ${eventoId}`
     const values = [eventoId];
 
 try {
