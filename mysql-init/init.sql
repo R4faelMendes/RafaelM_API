@@ -119,3 +119,27 @@ create table presenca(
     foreign key (fk_id_compra) references compra(id_compra)
 );
 
+create table log_cancelamento (
+    id_log int auto_increment primary key,
+    id_compra int not null,
+    data_tentativa datetime default current_timestamp,
+    status varchar(50) not null
+);
+
+delimiter // 
+create trigger trg_impede_cancelamento_chekin
+before delete on compra
+for each row
+begin
+    declare v_qtde_presenca int;
+    select count(*) into v_qtde_presenca
+        from presenca where id_compra = old.id_compra;
+    where fk_id_compra = old.id_compra;
+
+    if v_qtde_presenca > 0 then 
+        signal sqlstate '45000'
+        set message_text = 'Operação Negada: o usuario já realizou check-in com esse ingresso ';
+    end if;
+end; // 
+
+delimiter ;

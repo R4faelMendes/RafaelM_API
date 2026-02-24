@@ -49,7 +49,7 @@ module.exports = class ingressoController {
     FROM ingresso i
     JOIN evento e 
       ON i.id_ingresso = e.id_evento
-    WHERE e.id_evento = ${eventoId}`
+    WHERE e.id_evento = ${eventoId} `
     const values = [eventoId];
 
 try {
