@@ -1,6 +1,6 @@
 const connect = require("../db/connect");
 const bcrypt = require("bcrypt");
-const SALT_ROUNDS = 10; // Número de rounds para gerar o hash
+
 
 module.exports = class userController {
   static async createUser(req, res) {
@@ -28,15 +28,12 @@ module.exports = class userController {
         .json({ error: "Telefone inválido. Deve conter 11 dígitos numéricos" });
     }
 
-    // Criptografar a senha antes de salvar
-      const hashedPassword = await bcrypt.hash(senha, SALT_ROUNDS);
-
     // Query de inserção
     const query = `
     INSERT INTO usuario (cpf, nome, email, senha, telefone, data_nascimento)
     VALUES (?, ?, ?, ?, ?, ?)
   `;
-    const values = [cpf, nome, email, hashedPassword, telefone, data_nascimento];
+    const values = [cpf, nome, email, senha, telefone, data_nascimento];
 
     try {
       connect.query(query, values, (err) => {
@@ -87,15 +84,14 @@ module.exports = class userController {
         .json({ error: "Todos os campos devem ser preenchidos" });
     }
 
-    // Criptografar a senha antes de salvar
-      const hashedPassword = await bcrypt.hash(senha, SALT_ROUNDS);
+
 
     const query = `
     UPDATE usuario 
     SET nome = ?, email = ?, senha = ?, telefone = ?, data_nascimento = ?
     WHERE cpf = ?
   `;
-    const values = [nome, email, hashedPassword, telefone, data_nascimento, cpf];
+    const values = [nome, email, senha, telefone, data_nascimento, cpf];
 
     try {
       connect.query(query, values, (err, results) => {
@@ -165,10 +161,6 @@ module.exports = class userController {
         const user = results[0];
 
 
-
-        if (!senhaCorreta) {
-          return res.status(401).json({ error: "Senha incorreta" });
-        }
 
         return res.status(200).json({ message: "Login bem-sucedido", user });
       });
